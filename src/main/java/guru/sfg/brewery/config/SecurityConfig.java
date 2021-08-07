@@ -4,6 +4,7 @@ import guru.sfg.brewery.security.SfgPasswordEncoderFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
@@ -19,19 +21,28 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests(authorize -> {
                     authorize
-                            .antMatchers("/h2-console/**").permitAll()
+                            .antMatchers("/h2-console/**").permitAll() //do not use in production!
                             .antMatchers("/", "/webjars/**", "/login", "/resources/**").permitAll()
-                            .antMatchers("/beers/find", "/beers").permitAll()
-                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**").permitAll()
-                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}").permitAll()
-                    ;
-                })
+                            .antMatchers(HttpMethod.GET, "/api/v1/beer/**")
+                            .hasAnyRole("ADMIN", "CUSTOMER", "USER")
+                            .mvcMatchers(HttpMethod.DELETE, "/api/v1/beer/**").hasRole("ADMIN")
+                            .mvcMatchers(HttpMethod.GET, "/api/v1/beerUpc/{upc}")
+                            .hasAnyRole("ADMIN", "CUSTOMER", "USER")
+                            .mvcMatchers("/brewery/breweries")
+                            .hasAnyRole("ADMIN", "CUSTOMER")
+                            .mvcMatchers(HttpMethod.GET, "/brewery/api/v1/breweries")
+                            .hasAnyRole("ADMIN", "CUSTOMER")
+                            .mvcMatchers("/beers/find", "/beers/{beerId}")
+                            .hasAnyRole("ADMIN", "CUSTOMER", "USER");
+                } )
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .and().csrf().disable();
+        ;
 
         //h2 use frames and must be config
         //h2 console config
