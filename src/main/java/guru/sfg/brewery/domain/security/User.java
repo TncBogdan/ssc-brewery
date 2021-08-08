@@ -17,11 +17,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
+
     private String username;
     private String password;
 
-    @Singular//singular method for added an authority; if the set don`t exist,
+    //singular method for added an authority; if the set don`t exist,
     // lombok is provided the code that will do that
+    @Singular
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -38,8 +40,8 @@ public class User {
                 .collect(Collectors.toSet());
     }
 
-    @Builder.Default
     // if don`t use @Builder.Default the properties wil be null because of builder pattern
+    @Builder.Default
     private boolean accountNonExpired = true;
     @Builder.Default
     private boolean accountNonLocked = true;

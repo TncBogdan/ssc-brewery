@@ -22,8 +22,9 @@ public class Role {
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    @Singular//singular method for added an authority; if the set don`t exist,
+    //singular method for added an authority; if the set don`t exist,
     // lombok is provided the code that will do that
+    @Singular
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "role_authority",
             joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
