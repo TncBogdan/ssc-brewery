@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -21,11 +22,21 @@ public class User {
 
     @Singular//singular method for added an authority; if the set don`t exist,
     // lombok is provided the code that will do that
-    @ManyToMany(cascade = CascadeType.MERGE)
-    @JoinTable(name = "user_authority",
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "id")})
+            inverseJoinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")})
+    private Set<Role> roles;
+
+    @Transient //this property is calculated but not persisted
     private Set<Authority> authorities;
+
+    public Set<Authority> getAuthorities() {
+        return this.roles.stream()//get a set of roles, than stream that set
+                .map(Role::getAuthorities)//map and get a set of authority
+                .flatMap(Set::stream)//get authority from map
+                .collect(Collectors.toSet());
+    }
 
     @Builder.Default
     // if don`t use @Builder.Default the properties wil be null because of builder pattern
