@@ -1,6 +1,7 @@
 package guru.sfg.brewery.bootstrap;
 
 import guru.sfg.brewery.domain.security.Authority;
+import guru.sfg.brewery.domain.security.Role;
 import guru.sfg.brewery.domain.security.User;
 import guru.sfg.brewery.repositories.security.AuthorityRepository;
 import guru.sfg.brewery.repositories.security.RoleRepository;
@@ -10,6 +11,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Set;
 
 /**
  * Created by jt on 6/21/20.
@@ -31,26 +35,33 @@ public class UserDataLoader implements CommandLineRunner {
         Authority readBeer = authorityRepository.save(Authority.builder().permission("beer.read").build());
         Authority deleteBeer = authorityRepository.save(Authority.builder().permission("beer.delete").build());
 
-//        Authority admin = authorityRepository.save(Authority.builder().permission("ROLE_ADMIN").build());
-//        Authority userRole = authorityRepository.save(Authority.builder().permission("ROLE_USER").build());
-//        Authority customer = authorityRepository.save(Authority.builder().permission("ROLE_CUSTOMER").build());
+        Role adminRole = roleRepository.save(Role.builder().name("ADMIN").build());
+        Role customerRole = roleRepository.save(Role.builder().name("CUSTOMER").build());
+        Role userRole = roleRepository.save(Role.builder().name("USER").build());
+
+        //associate authorities with different roles
+        adminRole.setAuthorities(Set.of(createBeer, updateBeer, readBeer, deleteBeer));
+        customerRole.setAuthorities(Set.of(readBeer));
+        userRole.setAuthorities(Set.of(readBeer));
+
+        roleRepository.saveAll(Arrays.asList(adminRole, customerRole, userRole));
 
         userRepository.save(User.builder()
                 .username("spring")
                 .password(passwordEncoder.encode("guru"))
-                .authority(admin)
+                .role(adminRole)
                 .build());
 
         userRepository.save(User.builder()
                 .username("user")
                 .password(passwordEncoder.encode("password"))
-                .authority(userRole)
+                .role(userRole)
                 .build());
 
         userRepository.save(User.builder()
                 .username("scott")
                 .password(passwordEncoder.encode("tiger"))
-                .authority(customer)
+                .role(customerRole)
                 .build());
 
         log.debug("Users Loaded: " + userRepository.count());
