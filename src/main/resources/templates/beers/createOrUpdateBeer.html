@@ -1,5 +1,6 @@
 <html xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{fragments/layout :: layout (~{::body},'beers')}">
+      th:replace="~{fragments/layout :: layout (~{::body},'beers')}"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.thymeleaf.org ">
 
 <body>
 
@@ -7,17 +8,17 @@
     <th:block th:if="${beer['new']}">New Beer</th:block>
     Update Beer
 </h2>
-    <form th:object="${beer}" class="form-horizontal" id="add-beer-form" method="post">
+<form th:object="${beer}" class="form-horizontal" id="add-beer-form" method="post">
     <div class="form-group has-feedback">
-        <input type="hidden" th:field="*{id}" />
-        <input type="hidden" th:field="*{createdDate}" />
-        <input type="hidden" th:field="*{version}" />
-        <input th:replace="~{fragments/inputField :: input ('Beer Name', 'beerName', 'text')}" />
-        <input th:replace="~{fragments/selectField :: select ('Style', 'beerStyle', ${T(guru.sfg.brewery.web.model.BeerStyleEnum).values()})}" />
-        <input th:replace="~{fragments/inputField :: input ('UPC', 'upc', 'number')}" />
-        <input th:replace="~{fragments/inputField :: input ('Min Qty on Hand', 'minOnHand', 'number')}" />
-        <input th:replace="~{fragments/inputField :: input ('Qty to Brew', 'quantityToBrew', 'number')}" />
-        <input th:replace="~{fragments/inputField :: input ('Price', 'price', 'monetory')}" />
+        <input type="hidden" th:field="*{id}"/>
+        <input type="hidden" th:field="*{createdDate}"/>
+        <input type="hidden" th:field="*{version}"/>
+        <input th:replace="~{fragments/inputField :: input ('Beer Name', 'beerName', 'text')}"/>
+        <input th:replace="~{fragments/selectField :: select ('Style', 'beerStyle', ${T(guru.sfg.brewery.web.model.BeerStyleEnum).values()})}"/>
+        <input th:replace="~{fragments/inputField :: input ('UPC', 'upc', 'number')}"/>
+        <input th:replace="~{fragments/inputField :: input ('Min Qty on Hand', 'minOnHand', 'number')}"/>
+        <input th:replace="~{fragments/inputField :: input ('Qty to Brew', 'quantityToBrew', 'number')}"/>
+        <input th:replace="~{fragments/inputField :: input ('Price', 'price', 'monetory')}"/>
 
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
     </div>
@@ -26,7 +27,8 @@
             <button
                     th:with="text=${beer['new']} ? 'Add Beer' : 'Update Beer'"
                     class="btn btn-default" type="submit" th:text="${text}">Add
-                Beer</button>
+                Beer
+            </button>
         </div>
     </div>
 </form>
