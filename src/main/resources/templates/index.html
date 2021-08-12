@@ -27,7 +27,7 @@
 <body>
 <h2 th:text="#{welcomemsg}">SFG Brewery Monolith</h2>
 
-<div class="row">
+<div class="row" sec:authorize="!isAuthenticated()">
     <div class="col-md-12">
         <div th:if="${param.error}" class="alert alert-danger">Invalid username or password</div>
         <div th:if="${param.logout}" class="alert alert-success">You have logged out</div>
