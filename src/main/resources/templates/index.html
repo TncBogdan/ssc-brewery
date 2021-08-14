@@ -29,16 +29,19 @@
 
 <div class="row" sec:authorize="!isAuthenticated()">
     <div class="col-md-12">
-        <div th:if="${param.error}" class="alert alert-danger">Invalid username or password</div>
-        <div th:if="${param.logout}" class="alert alert-success">You have logged out</div>
+        <div th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']?.message} == 'Bad credentials'" class="alert alert-danger">Invalid Username or Password</div>
+
+        <div th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']?.message} == 'User account is locked'" class="alert alert-danger">User Account is Locked.</div>
+
+        <div th:if="${param.logout}" class="alert alert-success">You Have Logged Out</div>
         <form th:action="@{/login}" method="post">
-            <label for="username">Username</label>
+            <label for="username">Username:</label>
             <input type="text" id="username" name="username" autofocus="true" autocomplete="off">
-            <label for="password">Password</label>
+            <label for="password">Password:</label>
             <input type="password" id="password" name="password" autofocus="true" autocomplete="off">
-            <input type="submit" value="Log in">
-            <label for="remember-me">Remember me:</label> Log in">
-            <input type="checkbox" id="remember-me" name="remember-me">
+            <input type="submit" value="Log In">
+            <label for="remember-me">Remember Me:</label>
+            <input type="checkbox" id="remember-me" name="remember-me" />
         </form>
     </div>
 </div>
@@ -48,6 +51,8 @@
         <p><a th:href="@{/logout}">Logout</a></p>
     </div>
 </div>
+
+<!--<h2 th:text="${session['SPRING_SECURITY_LAST_EXCEPTION']?.message}"></h2>-->
 
 <div class="row">
     <div class="col-md-12">
