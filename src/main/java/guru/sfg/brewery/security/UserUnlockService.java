@@ -11,9 +11,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Created by jt on 7/21/20.
- */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -21,7 +18,7 @@ public class UserUnlockService {
 
     private final UserRepository userRepository;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 300000)
     public void unlockAccounts(){
         log.debug("Running Unlock Accounts");
 
